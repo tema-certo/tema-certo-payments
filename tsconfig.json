@@ -1,0 +1,53 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2020",
+    "lib": [
+      "es2020"
+    ],
+    "jsx": "react",
+    "allowJs": true,
+    "checkJs": true,
+    "outDir": "./dist",
+    "rootDirs": [
+          "./src",
+          "./database"
+      ],
+      "isolatedModules": true,
+      "removeComments": true,
+      "strict": false,
+      "strictNullChecks": true,
+      "strictFunctionTypes": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true,
+      "noUncheckedIndexedAccess": false,
+      "noImplicitOverride": false,
+      "noPropertyAccessFromIndexSignature": false,
+      "moduleResolution": "node",
+      "baseUrl": ".",
+      "paths": {
+        "~/*": ["src/*"]
+      },
+      "typeRoots": [
+          "./node_modules/@types",
+          "./src/@types"
+      ],
+      "types": ["node", "jest"],
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true,
+      "resolveJsonModule": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+  },
+  "exclude": [
+      "./node_modules",
+      "./uploads",
+      "./mysql",
+      "./mongo",
+      "./dist"
+  ]
+}
