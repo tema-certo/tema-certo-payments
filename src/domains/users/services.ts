@@ -115,4 +115,10 @@ export class UserService {
             token: generateJwtToken({ id: user.id }),
         };
     }
+
+    async updateUserLevel(userId: number, level: number): Promise<void> {
+        await User
+            .query()
+            .updateAndFetchById(userId, { level });
+    }
 }

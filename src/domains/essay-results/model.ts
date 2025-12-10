@@ -17,6 +17,8 @@ export class EssayResults extends Model {
     ia_result: EssayJsonResult;
     created_at: Date;
     updated_at: Date;
+    sequence: number;
+    user_id: number;
 
     $beforeInsert() {
         this.created_at = new Date();

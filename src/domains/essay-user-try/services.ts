@@ -30,11 +30,17 @@ export class EssayUserTryService {
         return createTry;
     }
 
-    async getTryById(id: number): Promise<EssayUserTry> {
+    async getTryById(id: number, userId?: number): Promise<EssayUserTry> {
         const tryById = await this.repository.getTryById(id);
 
         if (!tryById) {
             throw SendTryError('UNEXISTENT_ESSAY_TRY');
+        }
+
+        if (userId) {
+            if (tryById.user_id !== userId) {
+                throw SendTryError('INVALID_TRY_OWNER');
+            }
         }
 
         return tryById;

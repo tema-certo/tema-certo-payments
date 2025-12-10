@@ -19,7 +19,7 @@ export async function tryLimiter(
         day: date.getDate(),
     };
 
-    const keyRedisValue = `try-counter:${user!.id}:${dateSetup.year}-${dateSetup.month}-${dateSetup.day}`;
+    const keyRedisValue = `try-counter:${user!.id}:${dateSetup.year}-${dateSetup.month + 1}-${dateSetup.day}`;
 
     const counterDiaryLimited = Number(await redisClient.get(keyRedisValue)) || 0;
 

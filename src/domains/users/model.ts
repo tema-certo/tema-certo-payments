@@ -2,6 +2,8 @@ import { Model } from 'objection';
 import bcrypt from 'bcrypt';
 import { appConfig } from '~/config/app.config';
 import { Permissions } from '../permissions/model';
+import { missionService } from '~/domains/missions/controller';
+import { userMissionService } from '~/domains/users-missions/controller';
 
 export type UserWithPermissions = User & {
     permissions: Permissions;
@@ -35,15 +37,35 @@ export class User extends Model {
     user_role_id: number;
     oauth_provider: string;
     oauth_provider_id: string;
+    level: number;
 
-    $beforeInsert() {
+    async setUserFirstMissions(userId: number) {
+        const userMissionByLevel = await missionService.getMissionsByLevel(1);
+
+        if (userMissionByLevel.length) {
+            const missionsIds = userMissionByLevel.map((mission) => mission.id);
+
+            await userMissionService.setUserMissions(userId, missionsIds);
+        } else {
+            logger.error('Nenhuma missão encontrada para o nível 1');
+            return;
+        }
+
+    }
+
+    async $beforeInsert() {
         this.created_at = new Date();
         this.updated_at = new Date();
         this.user_role_id = UserRolesByIds.TRIAL;
+        this.level = 1;
     }
 
     $beforeUpdate() {
         this.updated_at = new Date();
+    }
+
+    async $afterInsert() {
+        await this.setUserFirstMissions(this.id);
     }
 
     $hiddenFields() {

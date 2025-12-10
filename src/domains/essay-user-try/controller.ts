@@ -1,9 +1,11 @@
 import EssayUserTryImplementation from './repository';
 import { EssayUserTryService } from './services';
-import { NextFunction, Response, Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { essayThemesService } from '~/domains/essay-themes/controller';
 import { essayResultsService } from '~/domains/essay-results/controller';
 import { EssayUserTryStatus } from '~/domains/essay-user-try/model';
+import { userMissionService } from '~/domains/users-missions/controller';
+import { MissionsIdentifierKeys } from '~/domains/users-missions/repository';
 
 const repository = new EssayUserTryImplementation();
 export const essayUserTryService = new EssayUserTryService(repository);
@@ -18,7 +20,9 @@ export async function correctEssay(request: Request, response: Response, next: N
             essay,
         } = request.body;
 
-        const theme = await essayThemesService.getThemeById(Number(theme_id));
+        await essayUserTryService.getTryById(try_id, user.id);
+
+        const theme = await essayThemesService.getThemeById(theme_id);
 
         const essayCorrected = await essayUserTryService.sendEssayToAi(essay, theme.essayTheme);
 
@@ -26,13 +30,20 @@ export async function correctEssay(request: Request, response: Response, next: N
             try_id,
             essay,
             true,
-            Number(user?.id),
+            user.id,
         );
 
         await essayResultsService.createResult(
+            user.id,
             try_id,
             essayCorrected.final_result.total_score,
             essayCorrected,
+        );
+
+        await userMissionService.updateUserMissions(
+            user.id,
+            user?.level,
+            MissionsIdentifierKeys.ESSAYS,
         );
 
         response.json(essayCorrected);

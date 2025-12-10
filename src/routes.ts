@@ -12,6 +12,7 @@ import { AppRouter, UseRoute } from './types/Router';
 import { OpenAPIV3 } from 'openapi-types';
 import { appConfig } from './config/app.config';
 import { authentication } from './middlewares/authentication';
+import userMissionsRoutes, { userMissionsRouter } from '~/domains/users-missions/routes';
 
 // ==== ROUTES REGISTER ====
 
@@ -53,6 +54,7 @@ const useRoutes: Array<UseRoute & { routes?: AppRouter[] }> = [
     { router: essayTryRouter, routes: essayTryRoutes },
     { router: essayResultsRouter, routes: essayResultsRoutes },
     { router: recoveryPasswordRouter, routes: recoveryPasswordRoutes },
+    { router: userMissionsRouter, routes: userMissionsRoutes },
 ];
 
 useRoutes.forEach((u) => {
