@@ -1,8 +1,5 @@
 import UserMission from './model';
-
-export enum MissionsIdentifierKeys {
-    ESSAYS = 'essays',
-}
+import { IdentifiersEnum, StrategysEnum } from '~/domains/missions/model';
 
 export type UserWithMissions = {
     id: number;
@@ -11,11 +8,12 @@ export type UserWithMissions = {
     level: number;
     target: {
         count: number;
-        identifier: string;
+        identifier: IdentifiersEnum;
     };
     type: string;
     completed: false;
     progress: number;
+    strategy: StrategysEnum;
 }
 
 export interface UserMissionRepository {
@@ -24,7 +22,7 @@ export interface UserMissionRepository {
         userId: number,
         level: number,
         completed?: boolean,
-        missionKey?: MissionsIdentifierKeys
+        missionKey?: IdentifiersEnum,
     ): Promise<UserWithMissions[]>;
     updateUserMissions(userId: number, missionId: number, updateValue: Partial<UserMission>): Promise<number>;
     checkLevelCompleted(userId: number, level: number): Promise<boolean>;
@@ -48,7 +46,7 @@ export class UserMissionRepositoryImplementation implements UserMissionRepositor
         userId: number,
         level: number,
         completed?: boolean,
-        missionKey?: MissionsIdentifierKeys,
+        missionKey?: IdentifiersEnum,
     ): Promise<UserWithMissions[]> {
         const query = UserMission
             .query()

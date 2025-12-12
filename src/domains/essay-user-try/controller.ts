@@ -5,7 +5,7 @@ import { essayThemesService } from '~/domains/essay-themes/controller';
 import { essayResultsService } from '~/domains/essay-results/controller';
 import { EssayUserTryStatus } from '~/domains/essay-user-try/model';
 import { userMissionService } from '~/domains/users-missions/controller';
-import { MissionsIdentifierKeys } from '~/domains/users-missions/repository';
+import { IdentifiersEnum } from '~/domains/missions/model';
 
 const repository = new EssayUserTryImplementation();
 export const essayUserTryService = new EssayUserTryService(repository);
@@ -38,12 +38,13 @@ export async function correctEssay(request: Request, response: Response, next: N
             try_id,
             essayCorrected.final_result.total_score,
             essayCorrected,
+            user?.level,
         );
 
         await userMissionService.updateUserMissions(
             user.id,
             user?.level,
-            MissionsIdentifierKeys.ESSAYS,
+            IdentifiersEnum.ESSAYS,
         );
 
         response.json(essayCorrected);

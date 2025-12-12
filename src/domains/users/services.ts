@@ -16,7 +16,7 @@ const client = new OAuth2Client(authConfig?.googleOauthClientId);
 export class UserService {
     constructor(private userRepository: UserRepository) {}
 
-    async createUser(user: User): Promise<CreateUserAsync | null> {
+    async createUser(user: User): Promise<CreateUserAsync> {
         const userAlwaysExists = await this.userRepository.userExists(user.email);
 
         if (userAlwaysExists) {
@@ -45,7 +45,7 @@ export class UserService {
         return this.userRepository.findById(id);
     }
 
-    async loginUser(email: string, password: string): Promise<{ token: string }> {
+    async loginUser(email: string, password: string): Promise<{ user: UserWithPermissions, token: string }> {
         const user = await this.userRepository.findByEmail({ userEmail: email, getSensitiveData: true });
 
         if (!user) {
@@ -63,6 +63,7 @@ export class UserService {
         };
 
         return {
+            user,
             token: generateJwtToken(payload),
         };
     }
@@ -89,7 +90,7 @@ export class UserService {
         return true;
     }
 
-    async loginWithGoogle(idToken: string): Promise<{ token: string }> {
+    async loginWithGoogle(idToken: string): Promise<{ user: UserWithPermissions, token: string }> {
         const ticket = await client.verifyIdToken({
             idToken,
             audience: authConfig?.googleOauthClientId,
@@ -112,6 +113,7 @@ export class UserService {
         }
 
         return {
+            user: removeSensitiveData(user),
             token: generateJwtToken({ id: user.id }),
         };
     }

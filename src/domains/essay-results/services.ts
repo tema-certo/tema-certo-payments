@@ -2,11 +2,19 @@ import { EssayResultsRepository } from '~/domains/essay-results/repository';
 import { DefaultHttpError } from '~/generic-errors';
 import { EssayJsonResult } from '~/types/UseAi';
 import { differenceInDays, startOfDay } from 'date-fns';
+import { userMissionService } from '~/domains/users-missions/controller';
+import { IdentifiersEnum } from '~/domains/missions/model';
 
 export class EssayResultsService {
     constructor(private readonly repository: EssayResultsRepository) {}
 
-    async createResult(userId: number, essayTryId: number, userScore: number, iaResult: EssayJsonResult) {
+    async createResult(
+        userId: number,
+        essayTryId: number,
+        userScore: number,
+        iaResult: EssayJsonResult,
+        level: number,
+    ) {
         let sequence = 1;
         const actualDate = new Date();
 
@@ -27,6 +35,13 @@ export class EssayResultsService {
         }
 
         const createdResult = await this.repository.createResult(essayTryId, userScore, iaResult, sequence, userId);
+
+        await userMissionService.updateUserMissions(
+            userId,
+            level,
+            IdentifiersEnum.ESSAY_PONTUATION,
+            userScore,
+        );
 
         if (!createdResult) throw DefaultHttpError({ element: 'Result', error: 'NOT_CREATED' });
 
