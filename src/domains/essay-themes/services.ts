@@ -32,13 +32,17 @@ export class EssayThemesService {
         return theme;
     }
 
-    async createTheme(theme: EssayThemesPossibleClassification, file: Express.Multer.File | null) {
-        if (file) {
-            const hashDocId = Buffer.from(Math
-                .random()
-                .toString())
-                .toString('base64url');
+    async createTheme(
+        theme: EssayThemesPossibleClassification,
+        file: Express.Multer.File | null,
+        image: Express.Multer.File | null,
+    ) {
+        const hashDocId = Buffer.from(Math
+            .random()
+            .toString())
+            .toString('base64url');
 
+        if (file) {
             const uploadFile = await createThemeFile(
                 s3Config.bucketEssayHelpersDocsName!,
                 `${formatThemeTitle(theme.essayTheme.theme_title)}_${hashDocId}`,
@@ -49,6 +53,21 @@ export class EssayThemesService {
                 theme.essayTheme.bucket_essay_docs = `https://${s3Config.bucketEssayHelpersDocsName}.`
                     + `${s3Config.endpoint?.split('://')[1]}`
                     + `/${formatThemeTitle(theme.essayTheme.theme_title)}_${hashDocId}`;
+            }
+        }
+
+        if (image) {
+            const formattedTitle = `${formatThemeTitle(theme.essayTheme.theme_title)}` + `_${hashDocId}`;
+
+            const uploadImage = await createThemeFile(
+                s3Config.bucketThemesImages!,
+                formattedTitle,
+                image,
+                'image/jpeg',
+            );
+
+            if (uploadImage) {
+                theme.essayTheme.image_endpoint = formattedTitle;
             }
         }
 

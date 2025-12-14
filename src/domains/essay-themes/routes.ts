@@ -41,7 +41,7 @@ export const routes: AppRouter[] = [
         path: '/create-theme',
         handler: createTheme,
         middlewares: [
-            upload.single('file'),
+            upload.fields([{ name: 'file', maxCount: 1 }, { name: 'image', maxCount: 1 }]),
             validateRequestAndFile({
                 requiredFile: false,
                 schema: createThemaSchema,

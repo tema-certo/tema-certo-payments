@@ -18,6 +18,7 @@ export class EssayThemes extends Model {
     created_at: Date;
     updated_at: Date;
     bucket_essay_docs?: string;
+    image_endpoint?: string;
 
     $beforeInsert() {
         this.created_at = new Date();

@@ -37,15 +37,33 @@ export async function createTheme(request: Request, response: Response, next: Ne
         const { theme, classification } = request.body;
 
         let file: Express.Multer.File | null = null;
+        let image: Express.Multer.File | null = null;
 
         if (request.file) {
             file = request.file;
         }
 
+        if (!request.file) {
+            if (request.files) {
+                const requestedDocFiles = request.files as {
+                    file?: Express.Multer.File[];
+                    image?: Express.Multer.File[]
+                };
+
+                if (requestedDocFiles.file) {
+                    file = requestedDocFiles.file[0];
+                }
+
+                if (requestedDocFiles.image) {
+                    image = requestedDocFiles.image[0];
+                }
+            }
+        }
+
         const themeCreated = await essayThemesService.createTheme({
             essayTheme: theme,
             classification,
-        }, file);
+        }, file, image);
 
         response.status(201).json(themeCreated);
     } catch (e) {

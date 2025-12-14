@@ -11,7 +11,12 @@ const useS3 = new S3Client({
     },
 });
 
-export const createThemeFile = (bucketName: string, key: string, file: Express.Multer.File) => {
+export const createThemeFile = (
+    bucketName: string,
+    key: string,
+    file: Express.Multer.File,
+    contentType?: string,
+) => {
     if (!file) {
         return;
     }
@@ -20,7 +25,7 @@ export const createThemeFile = (bucketName: string, key: string, file: Express.M
         Bucket: bucketName,
         Key: key,
         Body: file.buffer,
-        ContentType: 'application/pdf',
+        ContentType: contentType || 'application/pdf',
     });
 
     return useS3.send(command);

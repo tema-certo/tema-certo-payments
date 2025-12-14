@@ -47,7 +47,7 @@ export const validateRequest = ({
     };
 };
 
-export function validateRequestAndFile({
+export function     validateRequestAndFile({
     requiredFile = false,
     schema,
     type,
@@ -59,9 +59,12 @@ export function validateRequestAndFile({
     jsonFields?: string[];
 }) {
     return (req: Request, res: Response, next: NextFunction) => {
-        if (requiredFile && !req.file) {
-            res.status(400).json({ error: 'Arquivo é obrigatório' });
-            return;
+        const hasAnyFile =
+            req.file ||
+            (req.files && Object.values(req.files).flat().length > 0);
+
+        if (requiredFile && !hasAnyFile) {
+            return res.status(400).json({ error: 'Arquivo é obrigatório' });
         }
 
         for (const field of jsonFields) {
