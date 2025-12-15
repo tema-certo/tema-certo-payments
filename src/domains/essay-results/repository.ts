@@ -25,6 +25,7 @@ export interface EssayResultsRepository {
     getLastResultMaxDate(userId : number): Promise<EssayResults & { lastDate: Date } | undefined>;
     getLastResultComplete(userId: number): Promise<EssayResults | undefined>;
     getListLastResultsByUser(userId: number): Promise<EssayResults[]>;
+    getListLastHighScores(): Promise<EssayResults[]>;
 }
 
 export class EssayResultsRepositoryImplementation implements EssayResultsRepository {
@@ -51,9 +52,9 @@ export class EssayResultsRepositoryImplementation implements EssayResultsReposit
     async getUserAverageScore(userId: number): Promise<number> {
         const averageScore = await EssayUserTry
             .query()
-            .innerJoin('essay_results', 'essay_user_try.id', 'essay_results.essay_try_id')
+            .innerJoinRelated('results')
             .where('essay_user_try.user_id', userId)
-            .avg('essay_results.score as average')
+            .avg('results.score as average')
             .first() as EssayUserTry & { average: number };
 
         return Number(Math.round(averageScore?.average)) || 0;
@@ -115,11 +116,23 @@ export class EssayResultsRepositoryImplementation implements EssayResultsReposit
     async getListLastResultsByUser(userId: number): Promise<EssayResults[]> {
         return EssayResults
             .query()
-            .select('score', 'essay_themes.theme_title', 'essay_results.created_at as date')
-            .innerJoin('essay_user_try', 'essay_results.essay_try_id', 'essay_user_try.id')
-            .innerJoin('essay_themes', 'essay_user_try.essay_theme_id', 'essay_themes.id')
+            .select('score', 'themes.theme_title', 'essay_results.created_at as date')
+            .innerJoinRelated('essay_user_try')
+            .innerJoinRelated('themes')
             .where('essay_results.user_id', userId)
             .orderBy('essay_results.created_at', 'desc')
             .limit(10);
+    }
+
+    async getListLastHighScores(): Promise<EssayResults[]> {
+        return EssayResults
+            .query()
+            .select('score', 'themes.theme_title', 'essay_results.created_at as date', 'user.name')
+            .innerJoinRelated('essay_user_try')
+            .innerJoinRelated('user')
+            .innerJoinRelated('themes')
+            .orderBy('score', 'desc')
+            .orderBy('essay_results.created_at', 'desc')
+            .limit(20);
     }
 }

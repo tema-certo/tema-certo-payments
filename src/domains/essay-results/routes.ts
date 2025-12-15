@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { AppRouter } from '~/types/Router';
-import { userAverageScore, userLastResults, userStatisticsResults } from './controller';
+import { getUserHighScores, userAverageScore, userLastResults, userStatisticsResults } from './controller';
 import { permissionMiddleware } from '~/middlewares/permission';
 import { UserRoles } from '../permissions/model';
 
@@ -31,6 +31,15 @@ const routes: AppRouter[] = [
         method: 'get',
         path: '/last-essays-completed',
         handler: userLastResults,
+        middlewares: [
+            permissionMiddleware([UserRoles.USER, UserRoles.TRIAL]),
+        ],
+    },
+    {
+        toAuthenticated: true,
+        method: 'get',
+        path: '/most-high-scores',
+        handler: getUserHighScores,
         middlewares: [
             permissionMiddleware([UserRoles.USER, UserRoles.TRIAL]),
         ],

@@ -1,6 +1,7 @@
 import { Model } from 'objection';
 import { User } from '../users/model';
 import { EssayThemes } from '../essay-themes/model';
+import { EssayResults } from '~/domains/essay-results/model';
 
 export enum EssayUserTryStatus {
     PENDING = 'pending',
@@ -50,6 +51,14 @@ export class EssayUserTry extends Model {
                 join: {
                     from: 'essay_user_try.essay_theme_id',
                     to: 'essay_themes.id',
+                },
+            },
+            results: {
+                relation: Model.HasManyRelation,
+                modelClass: EssayResults,
+                join: {
+                    from: 'essay_user_try.id',
+                    to: 'essay_results.essay_try_id',
                 },
             },
         };

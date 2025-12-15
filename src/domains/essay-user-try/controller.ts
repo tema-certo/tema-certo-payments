@@ -16,13 +16,12 @@ export async function correctEssay(request: Request, response: Response, next: N
 
         const {
             try_id,
-            theme_id,
             essay,
         } = request.body;
 
-        await essayUserTryService.getTryById(try_id, user.id);
+        const foundTry = await essayUserTryService.getTryById(try_id, user.id);
 
-        const theme = await essayThemesService.getThemeById(theme_id);
+        const theme = await essayThemesService.getThemeById(foundTry.essay_theme_id);
 
         const essayCorrected = await essayUserTryService.sendEssayToAi(essay, theme.essayTheme);
 

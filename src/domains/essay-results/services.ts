@@ -86,4 +86,8 @@ export class EssayResultsService {
     async getListLastResultsByUser(userId: number) {
         return await this.repository.getListLastResultsByUser(userId);
     }
+
+    async getListHighScores() {
+        return await this.repository.getListLastHighScores();
+    }
 }

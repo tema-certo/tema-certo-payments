@@ -37,3 +37,13 @@ export const userLastResults = async (request: Request, response: Response, next
         next(e);
     }
 };
+
+export const getUserHighScores = async (_: Request, response: Response, next: NextFunction) => {
+    try {
+        const results = await essayResultsService.getListHighScores();
+
+        response.json(results);
+    } catch (e) {
+        next(e);
+    }
+};
