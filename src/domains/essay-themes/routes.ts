@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getThemesList, getThemeById, createTheme, downloadThemeContent } from './controller';
+import { getThemesList, getThemeById, createTheme, downloadThemeContent, getThemesStats } from './controller';
 import { createThemaSchema, getThemeByIdSchema } from './schemas';
 import { AppRouter } from '~/types/Router';
 import { getEssayThemesSwagger } from './swagger';
@@ -61,6 +61,15 @@ export const routes: AppRouter[] = [
                 schema: getThemeByIdSchema,
                 type: 'body',
             }),
+        ],
+    },
+    {
+        toAuthenticated: true,
+        method: 'get',
+        path: '/themes-stats',
+        handler: getThemesStats,
+        middlewares: [
+            permissionMiddleware([UserRoles.USER, UserRoles.TRIAL]),
         ],
     },
 ];

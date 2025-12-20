@@ -85,3 +85,13 @@ export async function downloadThemeContent(
         next(e);
     }
 }
+
+export async function getThemesStats(_: Request, response: Response, next: NextFunction) {
+    try {
+        const themesStats = await essayThemesService.getThemesStats();
+
+        response.json(themesStats);
+    } catch (e) {
+        next(e);
+    }
+}

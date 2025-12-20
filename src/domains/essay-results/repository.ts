@@ -12,6 +12,10 @@ type UserMetrics = {
     };
 };
 
+type EssayResultCount = EssayResults & {
+    count: number;
+}
+
 export interface EssayResultsRepository {
     createResult(
         essayTryId: number,
@@ -26,6 +30,7 @@ export interface EssayResultsRepository {
     getLastResultComplete(userId: number): Promise<EssayResults | undefined>;
     getListLastResultsByUser(userId: number): Promise<EssayResults[]>;
     getListLastHighScores(): Promise<EssayResults[]>;
+    getCountTotalResults(): Promise<EssayResultCount>;
 }
 
 export class EssayResultsRepositoryImplementation implements EssayResultsRepository {
@@ -134,5 +139,12 @@ export class EssayResultsRepositoryImplementation implements EssayResultsReposit
             .orderBy('score', 'desc')
             .orderBy('essay_results.created_at', 'desc')
             .limit(20);
+    }
+
+    async getCountTotalResults(): Promise<EssayResultCount> {
+        return EssayResults
+            .query()
+            .count('* as count')
+            .first() as unknown as EssayResults & { count: number };
     }
 }

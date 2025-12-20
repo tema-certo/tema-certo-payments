@@ -12,13 +12,19 @@ export async function authentication(request: Request, _response: Response, next
     }
 
     try {
-        const user = verifyJwtToken(token) as JwtPayload;
+        const userId = verifyJwtToken(token) as JwtPayload;
 
-        if (!user.id) {
+        if (!userId.id) {
             throw DefaultHttpError({ error: 'UNAUTHORIZED_INVALID_TOKEN' });
         }
 
-        request.user = await userService.findById(user.id);
+        const user = await userService.findById(userId.id);
+
+        if (!user) {
+            throw DefaultHttpError({ error: 'UNAUTHORIZED_INVALID_TOKEN' });
+        }
+
+        request.user = user;
 
         next();
     } catch (e) {

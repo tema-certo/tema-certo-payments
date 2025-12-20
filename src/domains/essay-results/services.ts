@@ -90,4 +90,8 @@ export class EssayResultsService {
     async getListHighScores() {
         return await this.repository.getListLastHighScores();
     }
+
+    async getCountTotalResults() {
+        return await this.repository.getCountTotalResults();
+    }
 }

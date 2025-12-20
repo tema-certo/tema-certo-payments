@@ -9,6 +9,7 @@ import { Response } from 'express';
 import { SendThemesError } from '~/errors/themes-errors';
 import { Pagination } from '~/types/express';
 import { EssayClassification } from '../essay-classification/model';
+import { essayResultsService } from '~/domains/essay-results/controller';
 
 export interface EssayThemesPossibleClassification {
     essayTheme: EssayThemes;
@@ -98,5 +99,17 @@ export class EssayThemesService {
             logger.error(error);
             throw DefaultHttpError({ element: 'Theme document', error: 'NOT_FOUND' });
         }
+    }
+
+    async getThemesStats() {
+        const [themesStats, themesResolved] = await Promise.all([
+            this.essayThemesRepository.getThemesStats(),
+            essayResultsService.getCountTotalResults(),
+        ]);
+
+        return {
+            themesStats,
+            themesResolved: Number(themesResolved?.count),
+        };
     }
 }
