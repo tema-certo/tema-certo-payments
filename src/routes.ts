@@ -13,6 +13,7 @@ import { OpenAPIV3 } from 'openapi-types';
 import { appConfig } from './config/app.config';
 import { authentication } from './middlewares/authentication';
 import userMissionsRoutes, { userMissionsRouter } from '~/domains/users-missions/routes';
+import pedagogicalOriginRoutes, { essayPedagogicalOriginRouter } from '~/domains/essay-pedagogical-origin/routes';
 
 // ==== ROUTES REGISTER ====
 
@@ -55,6 +56,7 @@ const useRoutes: Array<UseRoute & { routes?: AppRouter[] }> = [
     { router: essayResultsRouter, routes: essayResultsRoutes },
     { router: recoveryPasswordRouter, routes: recoveryPasswordRoutes },
     { router: userMissionsRouter, routes: userMissionsRoutes },
+    { router: essayPedagogicalOriginRouter, routes: pedagogicalOriginRoutes },
 ];
 
 useRoutes.forEach((u) => {
