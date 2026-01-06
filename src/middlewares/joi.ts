@@ -34,7 +34,7 @@ export const validateRequest = ({
         );
 
         if (error || !value) {
-            logger.warn(error);
+            logger.warn('Validation error');
 
             response.status(400).json({
                 info: 'Algumas informações estão faltando ou no formato incorreto.',

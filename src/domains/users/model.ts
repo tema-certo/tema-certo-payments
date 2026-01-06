@@ -38,6 +38,7 @@ export class User extends Model {
     oauth_provider: string;
     oauth_provider_id: string;
     level: number;
+    pre_registered_completed: boolean;
 
     async setUserFirstMissions(userId: number) {
         const userMissionByLevel = await missionService.getMissionsByLevel(1);

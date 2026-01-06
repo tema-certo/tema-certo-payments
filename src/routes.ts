@@ -14,6 +14,7 @@ import { appConfig } from './config/app.config';
 import { authentication } from './middlewares/authentication';
 import userMissionsRoutes, { userMissionsRouter } from '~/domains/users-missions/routes';
 import pedagogicalOriginRoutes, { essayPedagogicalOriginRouter } from '~/domains/essay-pedagogical-origin/routes';
+import preRegisterRoutes, { preRegisterRouter } from '~/domains/user-have-pre-registered-code/routes';
 
 // ==== ROUTES REGISTER ====
 
@@ -57,6 +58,7 @@ const useRoutes: Array<UseRoute & { routes?: AppRouter[] }> = [
     { router: recoveryPasswordRouter, routes: recoveryPasswordRoutes },
     { router: userMissionsRouter, routes: userMissionsRoutes },
     { router: essayPedagogicalOriginRouter, routes: pedagogicalOriginRoutes },
+    { router: preRegisterRouter, routes: preRegisterRoutes },
 ];
 
 useRoutes.forEach((u) => {

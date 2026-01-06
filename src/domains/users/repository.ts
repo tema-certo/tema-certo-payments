@@ -18,7 +18,8 @@ export interface UserRepository {
     getUserRole(userEmail: string): Promise<string | undefined>;
     updateUserPassword(userId: number, password: string): Promise<true | undefined>;
     findOrCreateOauthUser(params: GoogleOauthParams): Promise<UserWithPermissions | null>;
-};
+    updatePreRegister(userId: number): Promise<void>;
+}
 
 export class UserImplementation implements UserRepository {
     async findByEmail({
@@ -135,7 +136,14 @@ export class UserImplementation implements UserRepository {
             email: params?.email,
             oauth_provider: 'google',
             oauth_provider_id: params?.providerId,
+            pre_registered_completed: true,
             secret: await User.hashSecret(`oauth-${  crypto.randomUUID()}`),
         });
+    }
+
+    async updatePreRegister(userId: number): Promise<void> {
+        await User
+            .query()
+            .updateAndFetchById(userId, { pre_registered_completed: true });
     }
 }
