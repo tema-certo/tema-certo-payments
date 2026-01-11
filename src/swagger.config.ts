@@ -4,7 +4,7 @@ export const swaggerOptions = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Redaciona API',
+            title: 'Tema Certo - Payments API',
             version: '1.0.0',
             description: 'Redaciona API documentation',
         },

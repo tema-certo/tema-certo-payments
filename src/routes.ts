@@ -1,20 +1,10 @@
 import { RequestHandler, Router } from 'express';
 import swaggerUi from 'swagger-ui-express';
 
-import configParamsRoutes, { configParamsRouter } from './domains/config-params/routes';
-import essayThemesRoutes, { essayThemesRouter } from './domains/essay-themes/routes';
-import usersRoutes, { usersRouter } from './domains/users/routes';
-import essayTryRoutes, { essayTryRouter } from './domains/essay-user-try/routes';
-import essayResultsRoutes, { essayResultsRouter } from './domains/essay-results/routes';
-import recoveryPasswordRoutes, { recoveryPasswordRouter } from './domains/recovery-password/routes';
-
 import { AppRouter, UseRoute } from './types/Router';
 import { OpenAPIV3 } from 'openapi-types';
 import { appConfig } from './config/app.config';
 import { authentication } from './middlewares/authentication';
-import userMissionsRoutes, { userMissionsRouter } from '~/domains/users-missions/routes';
-import pedagogicalOriginRoutes, { essayPedagogicalOriginRouter } from '~/domains/essay-pedagogical-origin/routes';
-import preRegisterRoutes, { preRegisterRouter } from '~/domains/user-have-pre-registered-code/routes';
 
 // ==== ROUTES REGISTER ====
 
@@ -50,21 +40,12 @@ export function registerRoute(router: Router, routes: AppRouter[]) {
 // ==== ROUTES ====
 
 const useRoutes: Array<UseRoute & { routes?: AppRouter[] }> = [
-    { router: configParamsRouter, routes: configParamsRoutes },
-    { router: essayThemesRouter, routes: essayThemesRoutes },
-    { router: usersRouter, routes: usersRoutes },
-    { router: essayTryRouter, routes: essayTryRoutes },
-    { router: essayResultsRouter, routes: essayResultsRoutes },
-    { router: recoveryPasswordRouter, routes: recoveryPasswordRoutes },
-    { router: userMissionsRouter, routes: userMissionsRoutes },
-    { router: essayPedagogicalOriginRouter, routes: pedagogicalOriginRoutes },
-    { router: preRegisterRouter, routes: preRegisterRoutes },
 ];
 
 useRoutes.forEach((u) => {
     if (u.routes) {
         registerRoute(u.router, u.routes);
-        defaultRoutes.use('/api', u.router);
+        defaultRoutes.use('/api/payments', u.router);
     }
 });
 
@@ -86,10 +67,7 @@ const swaggerDoc: OpenAPIV3.Document = {
     },
     servers: [
         {
-            url: `http://localhost:${appConfig.port}/api`,
-        },
-        {
-            url: appConfig.renderBackendUrl!,
+            url: `http://localhost:${appConfig.port}/api/payments`,
         },
     ],
     paths: swaggerPaths,
