@@ -5,6 +5,8 @@ import { AppRouter, UseRoute } from './types/Router';
 import { OpenAPIV3 } from 'openapi-types';
 import { appConfig } from './config/app.config';
 import { authentication } from './middlewares/authentication';
+import checkoutRoutes, { router as checkoutRouter } from './domains/checkout/routes';
+import productPlansRoutes, { router as productPlansRouter } from './domains/product-plans/routes';
 
 // ==== ROUTES REGISTER ====
 
@@ -40,6 +42,8 @@ export function registerRoute(router: Router, routes: AppRouter[]) {
 // ==== ROUTES ====
 
 const useRoutes: Array<UseRoute & { routes?: AppRouter[] }> = [
+    { router: checkoutRouter, routes: checkoutRoutes },
+    { router: productPlansRouter, routes: productPlansRoutes },
 ];
 
 useRoutes.forEach((u) => {
