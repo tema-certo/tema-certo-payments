@@ -1,9 +1,5 @@
 import { Model } from 'objection';
-import bcrypt from 'bcrypt';
-import { appConfig } from '~/config/app.config';
 import { Permissions } from '../permissions/model';
-import { missionService } from '~/domains/missions/controller';
-import { userMissionService } from '~/domains/users-missions/controller';
 
 export type UserWithPermissions = User & {
     permissions: Permissions;
@@ -40,20 +36,6 @@ export class User extends Model {
     level: number;
     pre_registered_completed: boolean;
 
-    async setUserFirstMissions(userId: number) {
-        const userMissionByLevel = await missionService.getMissionsByLevel(1);
-
-        if (userMissionByLevel.length) {
-            const missionsIds = userMissionByLevel.map((mission) => mission.id);
-
-            await userMissionService.setUserMissions(userId, missionsIds);
-        } else {
-            logger.error('Nenhuma missão encontrada para o nível 1');
-            return;
-        }
-
-    }
-
     async $beforeInsert() {
         this.created_at = new Date();
         this.updated_at = new Date();
@@ -65,20 +47,8 @@ export class User extends Model {
         this.updated_at = new Date();
     }
 
-    async $afterInsert() {
-        await this.setUserFirstMissions(this.id);
-    }
-
     $hiddenFields() {
         return ['secret', 'updated_at', 'deleted_at', 'user_role_id', 'deleted', 'oauth_provider', 'oauth_provider_id'];
-    }
-
-    static async hashSecret(secret: string) {
-        return await bcrypt.hash(secret, appConfig.bcryptHashQuantity);
-    }
-
-    static async confirmSecret(secret: string, hashedSecret: string) {
-        return await bcrypt.compare(secret, hashedSecret);
     }
 
     static get relationMappings() {
