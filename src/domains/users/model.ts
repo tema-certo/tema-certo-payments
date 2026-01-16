@@ -6,11 +6,11 @@ export type UserWithPermissions = User & {
 };
 
 export enum UserRolesByIds  {
-    TRIAL = 1,
-    USER = 2,
+    FREE = 1,
+    BASIC = 2,
     ADMIN = 3,
     PEDAGOGICO = 4,
-    FINISHED_TRIAL = 6,
+    PRO = 6,
 }
 
 export class User extends Model {
@@ -39,7 +39,7 @@ export class User extends Model {
     async $beforeInsert() {
         this.created_at = new Date();
         this.updated_at = new Date();
-        this.user_role_id = UserRolesByIds.TRIAL;
+        this.user_role_id = UserRolesByIds.FREE;
         this.level = 1;
     }
 

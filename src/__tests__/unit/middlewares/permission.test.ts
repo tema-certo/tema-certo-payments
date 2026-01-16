@@ -9,8 +9,8 @@ describe('permission middleware tests', () => {
 
     const { response, next } = expressMock;
 
-    const uniquePermissionFn = permissionMiddleware(UserRoles.TRIAL);
-    const arrayPermissionFn = permissionMiddleware([UserRoles.TRIAL, UserRoles.ADMIN]);
+    const uniquePermissionFn = permissionMiddleware(UserRoles.USER_FREE);
+    const arrayPermissionFn = permissionMiddleware([UserRoles.USER_FREE, UserRoles.ADMIN]);
 
     const possibleUsesFunctions = [
         { fn: uniquePermissionFn },
@@ -42,7 +42,7 @@ describe('permission middleware tests', () => {
     describe('success cases (next)', () => {
         test.each(possibleUsesFunctions)('should call next if user has permission to that route', async ({ fn }) => {
             const requestSameRole = adaptMocks<Request>({
-                user: { permissions: { role_name: UserRoles.TRIAL } },
+                user: { permissions: { role_name: UserRoles.USER_FREE } },
             });
 
             fn(requestSameRole, response, next);

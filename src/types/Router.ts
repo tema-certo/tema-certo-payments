@@ -13,4 +13,5 @@ export interface AppRouter {
     middlewares?: RequestHandler[];
     handler: RequestHandler;
     swagger?: OpenAPIV3.OperationObject;
+    useRawBody?: boolean;
 }

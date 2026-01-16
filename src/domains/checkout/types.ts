@@ -1,3 +1,5 @@
+import Checkout from '~/domains/checkout/model';
+
 type LineItemsDefinition = {
     price: string;
     quantity: number;
@@ -5,7 +7,10 @@ type LineItemsDefinition = {
 
 type Metadata = {
     userId: number;
-    productId: number;
+    productId: string;
+    checkoutId: number;
+    daysToUse: number;
+    planName: string;
 };
 
 export type PaymentMethodTypes = 'card' | 'pix';
@@ -19,4 +24,14 @@ export type CheckoutSession = {
     metadata: Metadata;
     allowPromotionCodes: boolean;
     paymentMethodTypes: PaymentMethodTypes[];
+    paymentIntentData?: {
+        metadata: Metadata;
+    };
 };
+
+export type UpdateCheckoutReference = {
+    id: number;
+    status: Checkout['status'];
+    startedAt?: Date;
+    endsAt?: Date;
+}

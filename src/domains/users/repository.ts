@@ -7,6 +7,7 @@ export interface UserRepository {
     findByEmail({ userEmail, getSensitiveData }: findByEmailParams): Promise<UserWithPermissions | undefined>;
     findById(id: number): Promise<UserWithPermissions | undefined>;
     getUserRole(userEmail: string): Promise<string | undefined>;
+    updateUserWithId(id: number, data: Partial<User>): Promise<User>;
 }
 
 export class UserImplementation implements UserRepository {
@@ -57,5 +58,11 @@ export class UserImplementation implements UserRepository {
         if (!user) return undefined;
 
         return user.permissions?.role_name || 'NOT_DEFINED_ROLE';
+    }
+
+    async updateUserWithId(id: number, data: Partial<User>): Promise<User> {
+        return User
+            .query()
+            .patchAndFetchById(id, data);
     }
 }

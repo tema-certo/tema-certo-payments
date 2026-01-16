@@ -1,6 +1,14 @@
 import { createClient, RedisClientType } from 'redis';
+import { Redis } from 'ioredis';
+import { appConfig } from '~/config/app.config';
 
 let redisClient: RedisClientType;
+
+export function redisConnector() {
+    return new Redis(appConfig.redisUrl!, {
+        maxRetriesPerRequest: null,
+    });
+}
 
 export async function redisSetup(url: string) {
     redisClient = createClient({
@@ -12,10 +20,5 @@ export async function redisSetup(url: string) {
     await redisClient.connect();
     logger.info('Redis connected');
 
-    return redisClient;
-}
-
-export function getRedisClient() {
-    if (!redisClient) throw new Error('Redis not initialized');
     return redisClient;
 }
