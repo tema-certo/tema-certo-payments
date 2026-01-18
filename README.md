@@ -1,5 +1,3 @@
-# Redaciona
-# tema-certo-backend
-# tema-certo-backend
-# tema-certo-payments
-# tema-certo-payments
+# tema-certo-payments.
+
+Microservice para pagamentos com filas gerenciadas, production-ready.
