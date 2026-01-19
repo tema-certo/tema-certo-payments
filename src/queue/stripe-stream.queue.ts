@@ -1,7 +1,19 @@
-import { Queue } from 'bullmq';
-import { redisConnector } from '~/redis';
+import amqp from 'amqplib';
 import { streamsConfig } from '~/config/streams.config';
 
-export const stripeWebhookQueue = new Queue(streamsConfig.stripeWebhook, {
-    connection: redisConnector(),
-});
+type ChannelMQ = {
+    queueSetter: string;
+    settings?: amqp.Options.AssertQueue;
+}
+
+export async function getChannelMQ({
+    queueSetter,
+    settings,
+}: ChannelMQ): Promise<amqp.Channel> {
+    const connect = await amqp.connect(streamsConfig.amqpBaseUrl);
+    const connected = await connect.createChannel();
+
+    await connected.assertQueue(queueSetter, settings);
+
+    return connected;
+}

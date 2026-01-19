@@ -4,7 +4,8 @@ import { appConfig } from '~/config/app.config';
 import { productPlanService } from '~/domains/product-plans/controller';
 import { PaymentMethodTypes } from '~/domains/checkout/types';
 import CheckoutImplementation from '~/domains/checkout/repository';
-import { stripeWebhookQueue } from '~/queue/stripe-stream.queue';
+import { getChannelMQ } from '~/queue/stripe-stream.queue';
+import { streamsConfig } from '~/config/streams.config';
 
 const repository = new CheckoutImplementation();
 export const checkoutService = new CheckoutService(repository);
@@ -55,11 +56,20 @@ export async function webhook(request: Request, response: Response, next: NextFu
     const signature = request.headers['stripe-signature'] as string;
 
     try {
+        const channel = await getChannelMQ({
+            queueSetter: streamsConfig.stripeWebhook,
+            settings: {
+                durable: true,
+            },
+        });
+
         const event = await checkoutService.validateSignatureAndCreateEvent(body, signature);
 
-        await stripeWebhookQueue.add('handle-stripe-event',
+        channel.sendToQueue(
+            streamsConfig.stripeWebhook,
+            Buffer.from(JSON.stringify({ event })),
             {
-                event,
+                persistent: true,
             },
         );
 

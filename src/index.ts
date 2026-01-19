@@ -1,8 +1,8 @@
+import 'module-alias/register';
 import './setup';
 import app from '~/app';
 import { appConfig } from '~/config/app.config';
 import { isDevelopment } from '~/global';
-import 'module-alias/register';
 import logger from './logger';
 import { redisSetup } from './redis';
 

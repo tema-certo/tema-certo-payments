@@ -46,37 +46,3 @@ export const validateRequest = ({
         next();
     };
 };
-
-export function     validateRequestAndFile({
-    requiredFile = false,
-    schema,
-    type,
-    jsonFields = [],
-}: {
-    requiredFile?: boolean;
-    schema: Joi.ObjectSchema;
-    type: 'body' | 'query' | 'file';
-    jsonFields?: string[];
-}) {
-    return (req: Request, res: Response, next: NextFunction) => {
-        const hasAnyFile =
-            req.file ||
-            (req.files && Object.values(req.files).flat().length > 0);
-
-        if (requiredFile && !hasAnyFile) {
-            return res.status(400).json({ error: 'Arquivo é obrigatório' });
-        }
-
-        for (const field of jsonFields) {
-            if (req.body[field]) {
-                try {
-                    req.body[field] = JSON.parse(req.body[field]);
-                } catch {
-                    return res.status(400).json({ error: `Campo ${field} está em formato inválido.` });
-                }
-            }
-        }
-
-        return validateRequest({ schema, type })(req, res, next);
-    };
-}
