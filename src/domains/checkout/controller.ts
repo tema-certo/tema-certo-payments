@@ -3,8 +3,12 @@ import { CheckoutService } from '~/domains/checkout/services';
 import { appConfig } from '~/config/app.config';
 import { productPlanService } from '~/domains/product-plans/controller';
 import { PaymentMethodTypes } from '~/domains/checkout/types';
+import CheckoutImplementation from '~/domains/checkout/repository';
+import { getChannelMQ } from '~/queue/stripe-stream.queue';
+import { streamsConfig } from '~/config/streams.config';
 
-export const checkoutService = new CheckoutService();
+const repository = new CheckoutImplementation();
+export const checkoutService = new CheckoutService(repository);
 
 export async function createSubscriptionCheckoutSession(request: Request, response: Response, next: NextFunction) {
 
@@ -13,6 +17,8 @@ export async function createSubscriptionCheckoutSession(request: Request, respon
 
     try {
         const productInfo = await productPlanService.findSecureId(product_identifier);
+
+        const reference = await checkoutService.createCheckoutReference(request.user.id, product_identifier, 'pending');
 
         const session = await checkoutService.createSubscriptionCheckoutSession({
             mode: 'subscription',
@@ -29,7 +35,10 @@ export async function createSubscriptionCheckoutSession(request: Request, respon
             customerEmail: email,
             metadata: {
                 userId: request.user.id,
-                productId: productInfo.id,
+                productId: productInfo.secure_identifier,
+                checkoutId: reference.id,
+                daysToUse: productInfo.days_to_use,
+                planName: productInfo.plan_name,
             },
             paymentMethodTypes: productInfo.permissioned_payment_types.split(',') as PaymentMethodTypes[],
         });
@@ -37,6 +46,34 @@ export async function createSubscriptionCheckoutSession(request: Request, respon
         response.json({
             client_secret: session.client_secret,
         });
+    } catch (e) {
+        next(e);
+    }
+}
+
+export async function webhook(request: Request, response: Response, next: NextFunction) {
+    const body = request.body;
+    const signature = request.headers['stripe-signature'] as string;
+
+    try {
+        const channel = await getChannelMQ({
+            queueSetter: streamsConfig.stripeWebhook,
+            settings: {
+                durable: true,
+            },
+        });
+
+        const event = await checkoutService.validateSignatureAndCreateEvent(body, signature);
+
+        channel.sendToQueue(
+            streamsConfig.stripeWebhook,
+            Buffer.from(JSON.stringify({ event })),
+            {
+                persistent: true,
+            },
+        );
+
+        response.json({ received: true });
     } catch (e) {
         next(e);
     }

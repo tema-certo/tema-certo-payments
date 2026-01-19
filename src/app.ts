@@ -5,8 +5,11 @@ import helmet from 'helmet';
 import routes from '~/routes';
 import '~/knex';
 import { errorMiddlewareSent } from './middlewares/errors';
-
+import { webhook } from '~/domains/checkout/controller';
 const app = express();
+
+// Routes raw body for Stripe
+app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), webhook);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

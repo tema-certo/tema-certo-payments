@@ -1,4 +1,4 @@
-import express, { Router } from 'express';
+import { Router } from 'express';
 import { createSubscriptionCheckoutSession } from '~/domains/checkout/controller';
 import { AppRouter } from '~/types/Router';
 import { validateRequest } from '~/middlewares/joi';
@@ -18,7 +18,6 @@ const routes: AppRouter[] = [
                 type: 'body',
                 stripUnknown: true,
             }),
-            express.raw({ type: 'application/json' }),
         ],
     },
 ];

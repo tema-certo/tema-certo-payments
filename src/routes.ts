@@ -1,4 +1,4 @@
-import { RequestHandler, Router } from 'express';
+import express, { RequestHandler, Router } from 'express';
 import swaggerUi from 'swagger-ui-express';
 
 import { AppRouter, UseRoute } from './types/Router';
@@ -14,7 +14,7 @@ const defaultRoutes = Router();
 export const swaggerPaths: Record<string, any> = {};
 
 export function registerRoute(router: Router, routes: AppRouter[]) {
-    routes.forEach(({ toAuthenticated, method, path, middlewares = [], handler, swagger }) => {
+    routes.forEach(({ toAuthenticated, method, path, middlewares = [], handler, swagger, useRawBody }) => {
         const middlewaresGroup: RequestHandler[] = [];
 
         if (toAuthenticated) {
@@ -24,6 +24,10 @@ export function registerRoute(router: Router, routes: AppRouter[]) {
         middlewaresGroup.push(...middlewares);
 
         router[method](path, ...middlewaresGroup, handler);
+
+        if (useRawBody) {
+            middlewaresGroup.push(express.raw({ type: 'application/json' }));
+        }
 
         if (swagger) {
             const fullPath = path.replace(/\/+/g, '/');

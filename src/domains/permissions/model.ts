@@ -3,11 +3,19 @@ import { User } from '../users/model';
 
 export enum UserRoles {
     ADMIN = 'ai:adm',
-    USER = 'ai:user',
-    TRIAL = 'ai:trial', //  trocar na integração com o pazzei (trocas todas as roles)
-    FINISHED_TRIAL = 'ai:finished_trial',
+    USER_FREE = 'ai:free',
+    USER_BASIC = 'ai:basic',
+    USER_PRO = 'ai:pro',
     PEDAGOGICO = 'ai:pedagogico'
 }
+
+export const RoleByPlan: Record<string, number> = {
+    FREE: 1,
+    BASIC: 2,
+    PRO: 6,
+    ADM: 3,
+    PEDAGOGICO: 4,
+};
 
 export class Permissions extends Model {
     static get tableName() {

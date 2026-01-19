@@ -22,4 +22,5 @@ export default class ProductPlan extends Model {
     permissioned_payment_types: string;
     essays_per_month: number;
     created_at: Date;
+    days_to_use: number;
 }
